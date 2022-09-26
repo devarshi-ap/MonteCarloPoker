@@ -32,16 +32,16 @@ def check_pair(hand):
             if hand[x][0] == hand[y][0]:
                 # print(hand[x], hand[y])
                 pairs.append((hand[x], hand[y]))
-    return pairs
+    return [True if len(pairs) > 0 else False, pairs]
 
 def check_two_pair(hand):
     two_pairs = []
-    pairs = check_pair(hand)
+    has_pairs, pairs = check_pair(hand)
     for pair1 in range(len(pairs)):
         for pair2 in range(pair1 + 1, len(pairs)):
             if pairs[pair1][0][0] != pairs[pair2][0][0]:
                 two_pairs.append((pairs[pair1], pairs[pair2]))
-    return two_pairs
+    return [True if len(two_pairs) > 0 else False, two_pairs]
 
 def check_three_of_kind(hand):
     hand_values = [card[0] for card in hand]
@@ -49,7 +49,7 @@ def check_three_of_kind(hand):
     for value in hand_values:
         if hand_values.count(value) == 3 and value not in threes:
             threes.append(value)
-    return threes
+    return [True if len(threes) > 0 else False, threes]
 
 def check_straight(hand):
     straights = []
@@ -65,7 +65,7 @@ def check_straight(hand):
         for i in range(0, len(hand_values)-4):
             if hand_values[i] == hand_values[i+1]-1 == hand_values[i+2]-2 == hand_values[i+3]-3 == hand_values[i+4]-4:
                 straights.append(hand_values[i:i+5])
-    return straights
+    return [True if len(straights) > 0 else False, straights]
 
 def check_flush(hand):
     flushes = []
@@ -80,7 +80,7 @@ def check_flush(hand):
     for suit in hand_suits.keys():
         if hand_suits[suit] == 5:
             flushes.append([card for card in hand if card[1] == suit])
-    return flushes
+    return [True if len(flushes) > 0 else False, flushes]
 
 def check_full_house(hand):
     full_house = []
@@ -90,8 +90,8 @@ def check_full_house(hand):
         for value2 in range(value1+1, len(hand_values)):
             if hand_values.count(hand_values[value1]) == 3 and hand_values.count(hand_values[value2]) == 2 and hand_values[value1] != hand_values[value2]:
                 full_house.append((3 * [hand_values[value1]], 2 * [hand_values[value2]]))
-                return full_house
-    return []
+                return True, full_house
+    return False, []
 
 def check_four_of_kind(hand):
     hand_values = [RANKS_MAP.get(card[0]) for card in hand]
@@ -99,11 +99,9 @@ def check_four_of_kind(hand):
     for value in hand_values:
         if hand_values.count(value) == 4 and value not in fours:
             fours.append(value)
-    return fours
+    return [True if len(fours) > 0 else False, fours]
 
 def check_straight_flush(hand):
-    # [('A', 'd'), ('J', 'h'), ('10', 'h'), ('9', 's'), ('Q', 'd'), ('8', 'h'), ('7', 's')]
-    # [[7, 8, 9, 10, 11], [8, 9, 10, 11, 12]]
     straight_flushes = []
     suit_value_map = {
         's': [],
@@ -113,6 +111,8 @@ def check_straight_flush(hand):
     }
     for card in hand:
         suit_value_map.get(card[1]).append(RANKS_MAP.get(card[0]))
+        if card[0] == 'A':
+            suit_value_map.get(card[1]).append(14)
 
     for suit in suit_value_map:
         sorted_values = suit_value_map.get(suit)
@@ -121,5 +121,12 @@ def check_straight_flush(hand):
             for i in range(0, len(sorted_values) - 4):
                 if sorted_values[i] == sorted_values[i + 1] - 1 == sorted_values[i + 2] - 2 == sorted_values[i + 3] - 3 == sorted_values[i + 4] - 4:
                     straight_flushes.append(sorted_values[i:i + 5])
-    return straight_flushes
+    return [True if len(straight_flushes) > 0 else False, straight_flushes]
 
+def check_royal_flush(hand):
+    has_straight_flushes, straight_flushes = check_straight_flush(hand)
+    royal_flushes = []
+    for sf in straight_flushes:
+        if sf[0] == 10 and sf[-1] == 14:
+            royal_flushes.append(sf)
+    return [True if len(royal_flushes) > 0 else False, royal_flushes]

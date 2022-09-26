@@ -55,6 +55,38 @@ class Table:
     def get_table(self):
         return self.hole + self.community
 
+def classify(hand):
+    has_pairs = check_pair(hand)[0]
+    has_two_pairs = check_two_pair(hand)[0]
+    has_threes = check_three_of_kind(hand)[0]
+    has_straights = check_straight(hand)[0]
+    has_flushes = check_flush(hand)[0]
+    has_full_houses = check_full_house(hand)[0]
+    has_fours = check_four_of_kind(hand)[0]
+    has_straight_flushes = check_straight_flush(hand)[0]
+    has_royal_flush = check_royal_flush(hand)[0]
+
+    if has_royal_flush:
+        return "Royal Flush"
+    elif has_straight_flushes:
+        return 'Straight Flush'
+    elif has_fours:
+        return 'Fours'
+    elif has_full_houses:
+        return 'Full House'
+    elif has_flushes:
+        return 'Flush'
+    elif has_straights:
+        return 'Straight'
+    elif has_threes:
+        return 'Threes'
+    elif has_two_pairs:
+        return 'Two Pairs'
+    elif has_pairs:
+        return 'One Pair'
+    else:
+        return 'High Card'
+
 if __name__ == '__main__':
     deck = Deck()
     table = Table(deck)
@@ -63,34 +95,49 @@ if __name__ == '__main__':
     hand = table.get_table()
     print(hand)
 
-    pairs = check_pair(hand)
-    print("\n--------------------------------\n\n# Pairs\t\t: ", len(pairs))
+    has_pairs, pairs = check_pair(hand)
+    print("\n--------------------------------\n\nPair \t\t\t\t: ", has_pairs)
+    # print("\n--------------------------------\n\n# Pairs\t\t: ", len(pairs))
     # print(format_cards(pairs) if len(pairs) > 0 else "")
 
-    two_pairs = check_two_pair(hand)
-    print("# 2 Pairs\t: ", len(two_pairs))
+    has_two_pairs, two_pairs = check_two_pair(hand)
+    print("Two Pair \t\t\t: ", has_two_pairs)
+    # print("# 2 Pairs\t: ", len(two_pairs))
     # print(two_pairs)
 
-    threes = check_three_of_kind(hand)
-    print("# Three of a Kind\t: ", len(threes))
+    has_threes, threes = check_three_of_kind(hand)
+    print("Threes \t\t\t\t: ", has_threes)
+    # print("# Three of a Kind\t: ", len(threes))
     # print(threes)
 
-    straights = check_straight(hand)
-    print("# Straights\t: ", len(straights))
+    has_straights, straights = check_straight(hand)
+    print("Straights \t\t\t: ", has_straights)
+    # print("# Straights\t: ", len(straights))
     # print(straights)
 
-    flushes = check_flush(hand)
-    print("# Flushes\t: ", len(flushes))
+    has_flushes, flushes = check_flush(hand)
+    print("Flushes \t\t\t: ", has_flushes)
+    # print("# Flushes\t: ", len(flushes))
     # print(flushes)
 
-    full_houses = check_full_house(hand)
-    print("# Full Houses\t: ", len(full_houses))
+    has_full_houses, full_houses = check_full_house(hand)
+    print("Full Houses \t\t: ", has_full_houses)
+    # print("# Full Houses\t: ", len(full_houses))
     # print(full_houses)
 
-    fours = check_four_of_kind(hand)
-    print("# Fours\t: ", len(fours))
+    has_fours, fours = check_four_of_kind(hand)
+    print("Fours \t\t\t\t: ", has_fours)
+    # print("# Fours\t: ", len(fours))
     # print(fours)
 
-    straight_flushes = check_straight_flush([('A', 'd'), ('2', 'd'), ('3', 'd'), ('4', 'd'), ('5', 'd'), ('8', 'h'), ('7', 's')])
-    print("# Straight Flushes\t: ", len(straight_flushes))
+    has_straight_flushes, straight_flushes = check_straight_flush(hand)
+    print("Straight Flushes \t: ", has_straight_flushes)
+    # print("# Straight Flushes\t: ", len(straight_flushes))
     # print(straight_flushes)
+
+    has_royal_flush, royal_flushes = check_royal_flush(hand)
+    print("Royal Flushes \t\t: ", has_royal_flush)
+    # print("# Royal Flushes\t: ", len(royal_flushes))
+    # print(royal_flushes)
+
+    print("\n--------------------------------\n\nOverall Hand \t: ", classify(hand))
