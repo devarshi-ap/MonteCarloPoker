@@ -1,9 +1,16 @@
 import random
 from utils import *
 from hands import *
+import sqlite3
 
 """
 Test with PyTest
+
+Monte Carlo simulation to get an approximation to poker hand probabilities. Use > 1 million randomly generated hands
+1) Deal out 7 card hands
+2) Classify hand
+3) Save to DB
+4) Use DB entries to evaluate the probability of different hands
 """
 
 class Deck:
@@ -88,56 +95,51 @@ def classify(hand):
         return 'High Card'
 
 if __name__ == '__main__':
-    deck = Deck()
-    table = Table(deck)
-    table.print_table()
+    hand_count = {
+        'High Card': 0,
+        'One Pair': 0,
+        'Two Pairs': 0,
+        'Threes': 0,
+        'Straight': 0,
+        'Flush': 0,
+        'Full House': 0,
+        'Fours': 0,
+        'Straight Flush': 0,
+        'Royal Flush': 0,
+    }
+    NUM_SIMULATIONS = 100
 
-    hand = table.get_table()
-    print(hand)
+    for i in range(NUM_SIMULATIONS):
+        deck = Deck()
+        table = Table(deck)
+        # table.print_table()
+        hand = table.get_table()
+        # print("\nRaw Hand: ", hand)
 
-    has_pairs, pairs = check_pair(hand)
-    print("\n--------------------------------\n\nPair \t\t\t\t: ", has_pairs)
-    # print("\n--------------------------------\n\n# Pairs\t\t: ", len(pairs))
-    # print(format_cards(pairs) if len(pairs) > 0 else "")
+        hand_count[classify(hand)] += 1
+        # print("\n--------------------------------\n\nOverall Hand \t: ", classify(hand))
 
-    has_two_pairs, two_pairs = check_two_pair(hand)
-    print("Two Pair \t\t\t: ", has_two_pairs)
-    # print("# 2 Pairs\t: ", len(two_pairs))
-    # print(two_pairs)
+    # print(hand_count)
 
-    has_threes, threes = check_three_of_kind(hand)
-    print("Threes \t\t\t\t: ", has_threes)
-    # print("# Three of a Kind\t: ", len(threes))
-    # print(threes)
+    # Connect to DB
+    connection = sqlite3.connect("poker.db")
+    cursor = connection.cursor()
 
-    has_straights, straights = check_straight(hand)
-    print("Straights \t\t\t: ", has_straights)
-    # print("# Straights\t: ", len(straights))
-    # print(straights)
+    # Create Table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Poker
+                        (Hand text, Count number)''')
 
-    has_flushes, flushes = check_flush(hand)
-    print("Flushes \t\t\t: ", has_flushes)
-    # print("# Flushes\t: ", len(flushes))
-    # print(flushes)
+    # Make sure Table is Clear
+    cursor.execute('DELETE FROM Poker;', );
 
-    has_full_houses, full_houses = check_full_house(hand)
-    print("Full Houses \t\t: ", has_full_houses)
-    # print("# Full Houses\t: ", len(full_houses))
-    # print(full_houses)
+    # Insert Hand Map to DB
+    for hand in hand_count:
+        cursor.execute("INSERT OR IGNORE INTO Poker VALUES ('{hand_name}', {hand_count})".format(hand_name=hand, hand_count=hand_count[hand]))
 
-    has_fours, fours = check_four_of_kind(hand)
-    print("Fours \t\t\t\t: ", has_fours)
-    # print("# Fours\t: ", len(fours))
-    # print(fours)
+    # Print Records
+    for row in cursor.execute("SELECT * FROM Poker"):
+        print(row)
 
-    has_straight_flushes, straight_flushes = check_straight_flush(hand)
-    print("Straight Flushes \t: ", has_straight_flushes)
-    # print("# Straight Flushes\t: ", len(straight_flushes))
-    # print(straight_flushes)
+    connection.commit()
 
-    has_royal_flush, royal_flushes = check_royal_flush(hand)
-    print("Royal Flushes \t\t: ", has_royal_flush)
-    # print("# Royal Flushes\t: ", len(royal_flushes))
-    # print(royal_flushes)
-
-    print("\n--------------------------------\n\nOverall Hand \t: ", classify(hand))
+    connection.close()
