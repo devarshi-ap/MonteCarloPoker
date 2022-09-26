@@ -1,6 +1,6 @@
 import random
-from utils import *
 from hands import *
+from utils import *
 import sqlite3
 
 """
@@ -46,7 +46,7 @@ class Table:
         for i in range(2):
             self.hole.append(deck.deal())
 
-        for i in range(random.randint(0, 4)):
+        for i in range(random.randint(1, 5)):
             for k in range(2):
                 self.villains.append(deck.deal())
 
@@ -73,37 +73,39 @@ class Table:
     def get_table(self):
         return self.hole + self.community
 
-def classify(hand):
-    has_pairs = check_pair(hand)[0]
-    has_two_pairs = check_two_pair(hand)[0]
-    has_threes = check_three_of_kind(hand)[0]
-    has_straights = check_straight(hand)[0]
-    has_flushes = check_flush(hand)[0]
-    has_full_houses = check_full_house(hand)[0]
-    has_fours = check_four_of_kind(hand)[0]
-    has_straight_flushes = check_straight_flush(hand)[0]
-    has_royal_flush = check_royal_flush(hand)[0]
+    def get_villains_hands(self):
+        villains_hands = []
+        for i in range(0, len(table.villains), 2):
+            temp_villain_hand = [table.villains[i], table.villains[i + 1]] + table.community
+            villains_hands.append(classify(temp_villain_hand))
+        return villains_hands
 
-    if has_royal_flush:
+def classify(hand):
+    if check_royal_flush(hand)[0]:
         return "Royal Flush"
-    elif has_straight_flushes:
+    elif check_straight_flush(hand)[0]:
         return 'Straight Flush'
-    elif has_fours:
+    elif check_four_of_kind(hand)[0]:
         return 'Fours'
-    elif has_full_houses:
+    elif check_full_house(hand)[0]:
         return 'Full House'
-    elif has_flushes:
+    elif check_flush(hand)[0]:
         return 'Flush'
-    elif has_straights:
+    elif check_straight(hand)[0]:
         return 'Straight'
-    elif has_threes:
+    elif check_three_of_kind(hand)[0]:
         return 'Threes'
-    elif has_two_pairs:
+    elif check_two_pair(hand)[0]:
         return 'Two Pairs'
-    elif has_pairs:
+    elif check_pair(hand)[0]:
         return 'One Pair'
     else:
         return 'High Card'
+
+def game_result(player_hand, villain_hands):
+    player_quantified = HAND_RANK_MAP.get(player_hand)
+    villains_quantified = [HAND_RANK_MAP.get(villain) for villain in villain_hands]
+    return "Win" if player_quantified > max(villains_quantified) else "Lose" if player_quantified < max(villains_quantified) else "Draw"
 
 if __name__ == '__main__':
     hand_count = {
@@ -118,7 +120,12 @@ if __name__ == '__main__':
         'Straight Flush': 0,
         'Royal Flush': 0,
     }
-    NUM_SIMULATIONS = 10_000
+    results_count = {
+        "Win": 0,
+        "Lose": 0,
+        "Draw": 0
+    }
+    NUM_SIMULATIONS = 100
     print("️\n🪬🔮 Poker Monte-Carlo Simulator\n\t>>>> running %s simulations...\n-------------------------------\n" % NUM_SIMULATIONS)
 
     for i in range(NUM_SIMULATIONS):
@@ -126,9 +133,13 @@ if __name__ == '__main__':
         table = Table(deck)
         # table.print_table()
         hand = table.get_table()
-        # print("\nRaw Hand: ", hand)
-        hand_count[classify(hand)] += 1
-        # print("\n--------------------------------\n\nOverall Hand \t: ", classify(hand))
+
+        my_hand = classify(hand)
+        hand_count[my_hand] += 1
+
+        villains_hands = table.get_villains_hands()
+
+        results_count[game_result(my_hand, villains_hands)] += 1
 
     # Connect to DB
     connection = sqlite3.connect("poker.db")
@@ -136,16 +147,27 @@ if __name__ == '__main__':
 
     # Create Table
     cursor.execute("CREATE TABLE IF NOT EXISTS Poker (Hand text, Count number)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS GameResults (Result text, Count number)")
 
     # Make sure Table is Clear
-    cursor.execute('DELETE FROM Poker;', );
+    cursor.execute('DELETE FROM Poker;', )
+    cursor.execute('DELETE FROM GameResults;', )
 
     # Insert Hand Map to DB
     for hand in hand_count:
         cursor.execute("INSERT OR IGNORE INTO Poker VALUES ('{hand_name}', {hand_count})".format(hand_name=hand, hand_count=hand_count[hand]))
 
+    # Insert Game Results to DB
+    for result in results_count:
+        cursor.execute("INSERT OR IGNORE INTO GameResults VALUES ('{result_name}', {result_count})".format(result_name=result, result_count=results_count[result]))
+
     # Print Records
     for row in cursor.execute("SELECT * FROM Poker"):
+        print(row)
+
+    print('\n')
+
+    for row in cursor.execute("SELECT * FROM GameResults"):
         print(row)
 
     connection.commit()
