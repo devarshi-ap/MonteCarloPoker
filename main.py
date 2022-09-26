@@ -91,5 +91,6 @@ if __name__ == '__main__':
     print("# Fours\t: ", len(fours))
     # print(fours)
 
-    straight_flushes = check_straight_flush(hand)
-    print(straight_flushes)
+    straight_flushes = check_straight_flush([('A', 'd'), ('2', 'd'), ('3', 'd'), ('4', 'd'), ('5', 'd'), ('8', 'h'), ('7', 's')])
+    print("# Straight Flushes\t: ", len(straight_flushes))
+    # print(straight_flushes)

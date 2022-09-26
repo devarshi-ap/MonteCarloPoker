@@ -64,7 +64,7 @@ def check_straight(hand):
     if len(hand_values) > 5:
         for i in range(0, len(hand_values)-4):
             if hand_values[i] == hand_values[i+1]-1 == hand_values[i+2]-2 == hand_values[i+3]-3 == hand_values[i+4]-4:
-                straights.append(hand_values[i:i+4])
+                straights.append(hand_values[i:i+5])
     return straights
 
 def check_flush(hand):
@@ -102,5 +102,24 @@ def check_four_of_kind(hand):
     return fours
 
 def check_straight_flush(hand):
-    straight = check_straight(hand)
-    return straight
+    # [('A', 'd'), ('J', 'h'), ('10', 'h'), ('9', 's'), ('Q', 'd'), ('8', 'h'), ('7', 's')]
+    # [[7, 8, 9, 10, 11], [8, 9, 10, 11, 12]]
+    straight_flushes = []
+    suit_value_map = {
+        's': [],
+        'c': [],
+        'h': [],
+        'd': [],
+    }
+    for card in hand:
+        suit_value_map.get(card[1]).append(RANKS_MAP.get(card[0]))
+
+    for suit in suit_value_map:
+        sorted_values = suit_value_map.get(suit)
+        sorted_values.sort()
+        if len(sorted_values) >= 5:
+            for i in range(0, len(sorted_values) - 4):
+                if sorted_values[i] == sorted_values[i + 1] - 1 == sorted_values[i + 2] - 2 == sorted_values[i + 3] - 3 == sorted_values[i + 4] - 4:
+                    straight_flushes.append(sorted_values[i:i + 5])
+    return straight_flushes
+
