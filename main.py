@@ -141,6 +141,10 @@ if __name__ == '__main__':
 
         results_count[game_result(my_hand, villains_hands)] += 1
 
+    # Print Probabilities
+    for hand in hand_count:
+        print("{0} : {1}%".format(hand, round((hand_count[hand]/NUM_SIMULATIONS)*100, 2)))
+
     # Connect to DB
     connection = sqlite3.connect("poker.db")
     cursor = connection.cursor()
@@ -162,13 +166,13 @@ if __name__ == '__main__':
         cursor.execute("INSERT OR IGNORE INTO GameResults VALUES ('{result_name}', {result_count})".format(result_name=result, result_count=results_count[result]))
 
     # Print Records
-    for row in cursor.execute("SELECT * FROM Poker"):
-        print(row)
-
-    print('\n')
-
-    for row in cursor.execute("SELECT * FROM GameResults"):
-        print(row)
+    # for row in cursor.execute("SELECT * FROM Poker"):
+    #     print(row)
+    #
+    # print('\n')
+    #
+    # for row in cursor.execute("SELECT * FROM GameResults"):
+    #     print(row)
 
     connection.commit()
 
