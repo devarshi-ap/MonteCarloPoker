@@ -24,3 +24,16 @@ SUITS_MAP = {
     'h': '♥︎',
     'd': '♦︎'
 }
+
+HAND_RANK_MAP = {
+    'High Card': 1,
+    'One Pair': 2,
+    'Two Pairs': 3,
+    'Threes': 4,
+    'Straight': 5,
+    'Flush': 6,
+    'Full House': 7,
+    'Fours': 8,
+    'Straight Flush': 9,
+    'Royal Flush': 10,
+}
