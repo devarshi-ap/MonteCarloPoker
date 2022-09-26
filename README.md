@@ -13,7 +13,7 @@
 #### About Project
 
 **> 🔮 Inspiration**:
-- `MTH380 coursework` ∪ `Ocean's 11` ∪ `The Sting`
+- `MTH380 coursework` ∩ `Ocean's 11` ∩ `The Sting`
 
 **> 💫 Goal**:
 - Determine the winning percentage of every possible pocket combination across games of varying sizes
