@@ -38,22 +38,33 @@ class Table:
     def __init__(self, deck):
         self.community = []     # 5 cards
         self.hole = []          # 2 cards
+        self.villains = []       # varying # of villains (2 cards/villain)
         self.build(deck)
 
     def build(self, deck):
-        # deal 2 cards to hole and 5 to community (naive post-flop)
+        # deal 2 cards to hole, 2x to x villains, and 5 to community (naive post-flop)
         for i in range(2):
             self.hole.append(deck.deal())
+
+        for i in range(random.randint(0, 4)):
+            for k in range(2):
+                self.villains.append(deck.deal())
+
         for i in range(5):
             self.community.append(deck.deal())
 
     def print_table(self):
         hole_strArr = []
         community_strArr = []
+        villain_strArr = []
 
         for card in self.hole:
             hole_strArr.append("{value}{suit}".format(value=card[0], suit=SUITS_MAP.get(card[1])))
         print("Hole: ", ' '.join(hole_strArr))
+
+        for card in self.villains:
+            villain_strArr.append("{value}{suit}".format(value=card[0], suit=SUITS_MAP.get(card[1])))
+        print("Villains: ", ', '.join(villain_strArr))
 
         for card in self.community:
             community_strArr.append("{value}{suit}".format(value=card[0], suit=SUITS_MAP.get(card[1])))
@@ -107,7 +118,8 @@ if __name__ == '__main__':
         'Straight Flush': 0,
         'Royal Flush': 0,
     }
-    NUM_SIMULATIONS = 100
+    NUM_SIMULATIONS = 10_000
+    print("️\n🪬🔮 Poker Monte-Carlo Simulator\n\t>>>> running %s simulations...\n-------------------------------\n" % NUM_SIMULATIONS)
 
     for i in range(NUM_SIMULATIONS):
         deck = Deck()
@@ -115,19 +127,15 @@ if __name__ == '__main__':
         # table.print_table()
         hand = table.get_table()
         # print("\nRaw Hand: ", hand)
-
         hand_count[classify(hand)] += 1
         # print("\n--------------------------------\n\nOverall Hand \t: ", classify(hand))
-
-    # print(hand_count)
 
     # Connect to DB
     connection = sqlite3.connect("poker.db")
     cursor = connection.cursor()
 
     # Create Table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Poker
-                        (Hand text, Count number)''')
+    cursor.execute("CREATE TABLE IF NOT EXISTS Poker (Hand text, Count number)")
 
     # Make sure Table is Clear
     cursor.execute('DELETE FROM Poker;', );
