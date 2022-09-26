@@ -79,3 +79,17 @@ if __name__ == '__main__':
     print("# Straights\t: ", len(straights))
     # print(straights)
 
+    flushes = check_flush(hand)
+    print("# Flushes\t: ", len(flushes))
+    # print(flushes)
+
+    full_houses = check_full_house(hand)
+    print("# Full Houses\t: ", len(full_houses))
+    # print(full_houses)
+
+    fours = check_four_of_kind(hand)
+    print("# Fours\t: ", len(fours))
+    # print(fours)
+
+    straight_flushes = check_straight_flush(hand)
+    print(straight_flushes)
