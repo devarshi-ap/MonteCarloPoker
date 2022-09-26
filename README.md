@@ -63,5 +63,5 @@ $ python3 main.py
 ```
 2. perform data analysis and generate graphs
 ```bash
-$ python3 analysis.py
+$ python3 analysis.ipynb
 ```

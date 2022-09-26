@@ -125,8 +125,8 @@ if __name__ == '__main__':
         "Lose": 0,
         "Draw": 0
     }
-    NUM_SIMULATIONS = 100
-    print("️\n🪬🔮 Poker Monte-Carlo Simulator\n\t>>>> running %s simulations...\n-------------------------------\n" % NUM_SIMULATIONS)
+    NUM_SIMULATIONS = int(input("# Simulations: "))
+    print("\n🔮 Poker Monte-Carlo Simulator\n\t>>>> running %s simulations...\n-------------------------------\n" % NUM_SIMULATIONS)
 
     for i in range(NUM_SIMULATIONS):
         deck = Deck()
