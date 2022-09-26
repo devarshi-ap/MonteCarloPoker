@@ -16,12 +16,12 @@
 - `MTH380 coursework` ∩ `Ocean's 11` ∩ `The Sting`
 
 **> 💫 Goal**:
-- Determine the winning percentage of every possible pocket combination across games of varying sizes
+- Determine the probability of every possible pocket combination across games of varying sizes
 
 **> 🛠 Tools**: 
 - Python3
 - SQLite3
-- MatPlotLib
+- Seaborn (data visualization)
 - Jupyter Notebook
 - Unittest
 - Course-Notes
