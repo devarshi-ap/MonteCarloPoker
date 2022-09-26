@@ -57,11 +57,8 @@ This is what makes poker an ideal game for Monte Carlo simulation. Even if youâ€
 
 #### > Getting Started
 
-1. run simulations (set `NUM_SIMULATIONS`, default 10,000)
+1. run simulations (prompts for # simulations; don't go crazy < 1e6 pls)
 ```bash
 $ python3 main.py
 ```
-2. perform data analysis and generate graphs
-```bash
-$ python3 analysis.ipynb
-```
+2. perform data analysis and generate graphs in `analysis.ipynb` jupyter notebook
