@@ -57,8 +57,8 @@ This is what makes poker an ideal game for Monte Carlo simulation. Even if youâ€
 
 #### > Getting Started
 
-1. run simulations (prompts for # simulations; don't go crazy < 1e6 pls)
+1. run simulations (prompts for # simulations; don't go crazy < 1e6 pls) and generate hand % probabilities
 ```bash
 $ python3 main.py
 ```
-2. perform data analysis and generate graphs in `analysis.ipynb` jupyter notebook
+2. generate graphs based on above simulations by running all cells in `analysis.ipynb` jupyter notebook
