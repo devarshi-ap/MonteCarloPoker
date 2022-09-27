@@ -26,6 +26,10 @@
 - Unittest
 - Course-Notes
 
+
+https://user-images.githubusercontent.com/59234436/192401518-cd8b34b5-5afb-45b8-a3e9-742ed7971de9.mov
+
+
 > assumptions:
 > 1. *no betting or money*
 >    - shouldn’t affect probabilities outside of eliminating the players involved; addressed in my next assumption
